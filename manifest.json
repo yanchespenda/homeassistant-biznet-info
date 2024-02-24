@@ -1,6 +1,6 @@
 {
-  "domain": "biznet_quota",
-  "name": "Biznet Quota Sensor",
+  "domain": "biznet_info",
+  "name": "Biznet Info Sensor",
   "documentation": "https://github.com/yanchespenda/homeassistant-biznet-info",
   "dependencies": [],
   "codeowners": [],
