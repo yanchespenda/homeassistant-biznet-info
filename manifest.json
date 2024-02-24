@@ -1,0 +1,15 @@
+{
+  "domain": "biznet_quota",
+  "name": "Biznet Quota Sensor",
+  "documentation": "https://github.com/yanchespenda/homeassistant-biznet-info",
+  "dependencies": [],
+  "codeowners": [],
+  "requirements": [],
+  "version": "1.0.0",
+  "issue_tracker": "https://github.com/yanchespenda/homeassistant-biznet-info/issues",
+  "quality_scale": "gold",
+  "iot_class": "local_polling",
+  "iot_class_title": "Local Polling",
+  "iot_description": "This integration fetches data from Biznet Quota API to monitor internet usage.",
+  "iot_icon": "mdi:chart-pie"
+}
