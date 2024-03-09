@@ -13,33 +13,41 @@ import homeassistant.helpers.config_validation as cv
 _LOGGER = logging.getLogger(__name__)
 
 CONF_CONTRACT_NUMBER = 'contract_number'
+CONF_API_TOKEN = 'api_token'
+CONF_AUTHORIZATION = 'authorization'
 
 DOMAIN = "biznet_info"
 
 DEFAULT_NAME = 'Biznet Info'
 
-SCAN_INTERVAL = timedelta(seconds=30)
+SCAN_INTERVAL = timedelta(seconds=60)
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
-    vol.Required(CONF_CONTRACT_NUMBER): cv.string
+    vol.Required(CONF_CONTRACT_NUMBER): cv.string,
+    vol.Required(CONF_API_TOKEN): cv.string,
+    vol.Required(CONF_AUTHORIZATION): cv.string
 })
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
     name = config.get(CONF_NAME)
     contract_number = config.get(CONF_CONTRACT_NUMBER)
+    api_token = config.get(CONF_API_TOKEN)
+    authorization = config.get(CONF_AUTHORIZATION)
 
     add_entities([
-        BiznetRemainingLimitSensor(name, contract_number),
-        BiznetLimitSensor(name, contract_number),
-        BiznetValidUntilSensor(name, contract_number)
+        BiznetRemainingLimitSensor(name, contract_number, api_token, authorization),
+        BiznetLimitSensor(name, contract_number, api_token, authorization),
+        BiznetValidUntilSensor(name, contract_number, api_token, authorization)
     ], True)
 
 class BiznetRemainingLimitSensor(Entity):
-    def __init__(self, name, contract_number):
+    def __init__(self, name, contract_number, api_token, authorization):
         self._name = f"{name} Remaining Limit"
         self._contract_number = contract_number
         self._state = None
+        self._api_token = api_token
+        self._authorization = authorization
 
     @property
     def name(self):
@@ -52,7 +60,11 @@ class BiznetRemainingLimitSensor(Entity):
     def update(self):
         _LOGGER.info("Retrieve remaining limit data")
         url = f"https://api.biznetnetworks.com/getQuotaInfo?contractNumber={self._contract_number}"
-        response = requests.get(url)
+        headers = {
+            'Api-Token': self._api_token,
+            'Authorization': self._authorization
+        }
+        response = requests.get(url, headers=headers)
         data = response.json()
 
         if 'contarctNumber' in data:
@@ -63,10 +75,12 @@ class BiznetRemainingLimitSensor(Entity):
             _LOGGER.error("Error retrieving remaining limit data from the API")
 
 class BiznetLimitSensor(Entity):
-    def __init__(self, name, contract_number):
+    def __init__(self, name, contract_number, api_token, authorization):
         self._name = f"{name} Limit"
         self._contract_number = contract_number
         self._state = None
+        self._api_token = api_token
+        self._authorization = authorization
 
     @property
     def name(self):
@@ -79,7 +93,11 @@ class BiznetLimitSensor(Entity):
     def update(self):
         _LOGGER.info("Retrieve limit data")
         url = f"https://api.biznetnetworks.com/getQuotaInfo?contractNumber={self._contract_number}"
-        response = requests.get(url)
+        headers = {
+            'Api-Token': self._api_token,
+            'Authorization': self._authorization
+        }
+        response = requests.get(url, headers=headers)
         data = response.json()
 
         if 'contarctNumber' in data:
@@ -90,10 +108,12 @@ class BiznetLimitSensor(Entity):
             _LOGGER.error("Error retrieving limit data from the API")
 
 class BiznetValidUntilSensor(Entity):
-    def __init__(self, name, contract_number):
+    def __init__(self, name, contract_number, api_token, authorization):
         self._name = f"{name} Valid Until"
         self._contract_number = contract_number
         self._state = None
+        self._api_token = api_token
+        self._authorization = authorization
 
     @property
     def name(self):
@@ -106,7 +126,11 @@ class BiznetValidUntilSensor(Entity):
     def update(self):
         _LOGGER.info("Retrieve valid until data")
         url = f"https://api.biznetnetworks.com/getQuotaInfo?contractNumber={self._contract_number}"
-        response = requests.get(url)
+        headers = {
+            'Api-Token': self._api_token,
+            'Authorization': self._authorization
+        }
+        response = requests.get(url, headers=headers)
         data = response.json()
 
         if 'contarctNumber' in data:
